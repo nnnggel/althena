@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2020 ycy
+ * Copyright (C) 2022 chongyu.yuan
  */
 package io.althena.spear.cal;
+
+import io.althena.spear.model.BasePool;
 
 /**
  * PoolCalculatedResult
@@ -11,25 +13,25 @@ package io.althena.spear.cal;
  */
 public class PoolCalculatedResult implements Comparable<PoolCalculatedResult> {
 
-    private PoolDesc poolDesc;
+    private BasePool pool;
     private AmountInAndOut amountInAndOut;
 
-    public PoolCalculatedResult(PoolDesc poolDesc, AmountInAndOut amountInAndOut) {
-        this.poolDesc = poolDesc;
+    public PoolCalculatedResult(BasePool pool, AmountInAndOut amountInAndOut) {
+        this.pool = pool;
         this.amountInAndOut = amountInAndOut;
     }
 
     @Override
     public String toString() {
-        return "PoolCalculatedResult{" + "poolDesc=" + poolDesc + ", amountInAndOut=" + amountInAndOut + '}';
+        return "PoolCalculatedResult{" + "pool=" + pool + ", amountInAndOut=" + amountInAndOut + '}';
     }
 
-    public PoolDesc getPoolDesc() {
-        return poolDesc;
+    public BasePool getPool() {
+        return pool;
     }
 
-    public void setPoolDesc(PoolDesc poolDesc) {
-        this.poolDesc = poolDesc;
+    public void setPool(BasePool pool) {
+        this.pool = pool;
     }
 
     public AmountInAndOut getAmountInAndOut() {

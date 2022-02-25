@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ycy
+ * Copyright (C) 2022 chongyu.yuan
  */
 package io.althena.spear;
 

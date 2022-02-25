@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ycy
+ * Copyright (C) 2022 chongyu.yuan
  */
 package io.althena.spear.model;
 
@@ -7,6 +7,8 @@ import com.algorand.algosdk.v2.client.common.AlgodClient;
 import io.althena.spear.Utils;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Asset
@@ -87,5 +89,25 @@ public class Asset {
     public String toString() {
         return "Asset{" + "id=" + id + ", name='" + name + '\'' + ", unitName='" + unitName + '\'' + ", decimals="
             + decimals + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Asset asset = (Asset) o;
+
+        return new EqualsBuilder().append(id, asset.id).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(id).toHashCode();
     }
 }

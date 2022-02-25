@@ -1,10 +1,12 @@
 /*
- * Copyright (C) 2020 ycy
+ * Copyright (C) 2022 chongyu.yuan
  */
 package io.althena.spear.cal;
 
+import io.althena.spear.model.Asset;
+import io.althena.spear.model.BasePool;
+import io.althena.spear.model.Dex;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 /**
  * PoolCalculator
@@ -12,56 +14,99 @@ import java.math.RoundingMode;
  * @author chongyu.yuan
  * @since 2022/1/28
  */
-public class PoolCalculator {
+public abstract class PoolCalculator {
 
-    private String dex;
-    private BigDecimal reserveA;
-    private BigDecimal reserveB;
-    private BigDecimal feeRate;
-    private BigDecimal slippage;
+    protected BasePool pool;
+    protected Dex dex;
+    protected Asset assetA;
+    protected Asset assetB;
+    protected BigDecimal reserveA;
+    protected BigDecimal reserveB;
+    protected BigDecimal feeBp;
+    protected int scale;
 
-    public PoolCalculator(String dex, BigDecimal reserveA, BigDecimal reserveB, BigDecimal feeRate,
-        BigDecimal slippage) {
-        this.dex = dex;
-        this.feeRate = feeRate;
-        this.slippage = slippage;
-        this.reserveA = reserveA;
-        this.reserveB = reserveB;
+    protected PoolCalculator(BasePool pool, BigDecimal feeBp, Integer scale) {
+        this.pool = pool;
+        this.dex = pool.getDex();
+        this.assetA = pool.getAssetA();
+        this.assetB = pool.getAssetB();
+        this.reserveA = new BigDecimal(pool.getAssetAReserves());
+        this.reserveB = new BigDecimal(pool.getAssetBReserves());
+        this.feeBp = feeBp;
+        this.scale = scale;
     }
 
-    public BigDecimal fixedIn(BigDecimal amountIn, int decimalForamountOut) {
-        // TODO
-        return BigDecimal.ZERO;
+    public BigDecimal fixedIn(Asset assetIn, BigDecimal amountIn) {
+        if (assetIn.equals(assetA)) {
+            return _fixedInWithAssetA(assetIn, amountIn);
+        } else if (assetIn.equals(assetB)) {
+            return _fixedInWithAssetB(assetIn, amountIn);
+        } else {
+            throw new RuntimeException("assetIn must be assetA or assetB");
+        }
+    }
+
+    protected abstract BigDecimal _fixedInWithAssetA(Asset assetIn, BigDecimal amountIn);
+
+    protected abstract BigDecimal _fixedInWithAssetB(Asset assetIn, BigDecimal amountIn);
+
+    //    public abstract PoolCalculator newInstance(BasePool pool, BigDecimal feeBp, int scale);
+
+    public static PoolCalculator newInstance(Class<? extends PoolCalculator> clazz, BasePool pool, BigDecimal feeBp,
+        int scale) {
+        try {
+            return clazz.getDeclaredConstructor(BasePool.class, BigDecimal.class, Integer.class)
+                .newInstance(pool, feeBp, scale);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
     public String toString() {
-        return "PoolCalculator{" + "dex='" + dex + '\'' + ", reserveA=" + reserveA + ", reserveB=" + reserveB
-            + ", feeRate=" + feeRate + ", slippage=" + slippage + '}';
+        return "PoolCalculator{" + "pool=" + pool + ", dex=" + dex + ", assetA=" + assetA + ", assetB=" + assetB
+            + ", reserveA=" + reserveA + ", reserveB=" + reserveB + ", feeBp=" + feeBp + ", scale=" + scale + '}';
     }
 
-    public String getDex() {
+    public BasePool getPool() {
+        return pool;
+    }
+
+    public void setPool(BasePool pool) {
+        this.pool = pool;
+    }
+
+    public Dex getDex() {
         return dex;
     }
 
-    public void setDex(String dex) {
+    public void setDex(Dex dex) {
         this.dex = dex;
     }
 
-    public BigDecimal getFeeRate() {
-        return feeRate;
+    public BigDecimal getFeeBp() {
+        return feeBp;
     }
 
-    public BigDecimal getSlippage() {
-        return slippage;
+    public void setFeeBp(BigDecimal feeBp) {
+        this.feeBp = feeBp;
     }
 
-    public void setSlippage(BigDecimal slippage) {
-        this.slippage = slippage;
+    public Asset getAssetA() {
+        return assetA;
     }
 
-    public void setFeeRate(BigDecimal feeRate) {
-        this.feeRate = feeRate;
+    public void setAssetA(Asset assetA) {
+        this.assetA = assetA;
+    }
+
+    public Asset getAssetB() {
+        return assetB;
+    }
+
+    public void setAssetB(Asset assetB) {
+        this.assetB = assetB;
     }
 
     public BigDecimal getReserveA() {
@@ -80,4 +125,11 @@ public class PoolCalculator {
         this.reserveB = reserveB;
     }
 
+    public int getScale() {
+        return scale;
+    }
+
+    public void setScale(int scale) {
+        this.scale = scale;
+    }
 }

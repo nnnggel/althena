@@ -7,4 +7,6 @@ package io.althena.spear.model;
  * @since 2022/2/12
  */
 public enum Dex {
+    FAKE(),
+    PACT()
 }

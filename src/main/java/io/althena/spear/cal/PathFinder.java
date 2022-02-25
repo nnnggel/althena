@@ -1,13 +1,16 @@
 /*
- * Copyright (C) 2020 ycy
+ * Copyright (C) 2022 chongyu.yuan
  */
 package io.althena.spear.cal;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import io.althena.spear.model.Asset;
+import io.althena.spear.model.BasePool;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,30 +28,49 @@ public class PathFinder {
         this.copies = copies;
     }
 
-    // Map<SimplePool,AmountInAndOut>
-    public Map<PoolDesc, AmountInAndOut> findByFixedIn(Asset assetA, Asset assetB, List<PoolCalculator> poolCalculators,
-        BigInteger amountInTotal) {
-        // TODO
-        return Maps.newHashMap();
+    // Map<BasePool,AmountInAndOut>
+    public Map<BasePool, AmountInAndOut> findByFixedIn(List<PoolCalculator> poolCalculators, Asset assetIn,
+        BigInteger amountIn) {
+        // ignore check
+        BigDecimal amountInTotalD = new BigDecimal(amountIn);
+        BigDecimal amountInSplited = amountInTotalD.divide(BigDecimal.valueOf(copies), assetIn.getDecimals().intValue(),
+            RoundingMode.FLOOR);
+
+        List<PoolCalculatedResult> poolCalculatedResults = Lists.newArrayList();
+        for (int i = 0; i < poolCalculators.size(); i++) {
+            PoolCalculator poolCalculator = poolCalculators.get(i);
+            BasePool pool = poolCalculator.getPool();
+            for (int j = 0; j < copies; j++) {
+                BigDecimal amountOut = poolCalculator.fixedIn(assetIn, amountInSplited);
+                poolCalculatedResults.add(
+                    new PoolCalculatedResult(pool, new AmountInAndOut(amountInSplited, amountOut)));
+            }
+        }
+
+        // sort and split
+        Collections.sort(poolCalculatedResults);
+        Collections.reverse(poolCalculatedResults);
+        poolCalculatedResults = poolCalculatedResults.subList(0, copies);
+        //        amountPoolPairs.forEach(System.out::println);
+
+        final Map<BasePool, AmountInAndOut> res = new HashMap<>();
+        poolCalculatedResults.forEach(poolCalculatedResult -> {
+            BasePool pool = poolCalculatedResult.getPool();
+            AmountInAndOut amountInAndOutSum = res.get(pool);
+            AmountInAndOut amountInAndOutEach = poolCalculatedResult.getAmountInAndOut();
+            if (amountInAndOutSum == null) {
+                // init
+                amountInAndOutSum = new AmountInAndOut(amountInAndOutEach.getAmountIn(),
+                    amountInAndOutEach.getAmountOut());
+                res.put(pool, amountInAndOutSum);
+            } else {
+                // sum
+                amountInAndOutSum.addAmountIn(amountInAndOutEach.getAmountIn())
+                    .addAmountOut(amountInAndOutEach.getAmountOut());
+            }
+        });
+
+        return res;
     }
 
-    public static void main(String[] args) {
-        // mock assets
-        Asset assetA = new Asset(0L).setName("Algo").setUnitName("ALGO").setDecimals(6L);
-        Asset assetB = new Asset(21582668L).setName("TestUsdc").setUnitName("USDC").setDecimals(6L);
-
-        // mock pools
-        PoolCalculator pool1 = new PoolCalculator("dex1", BigDecimal.valueOf(10000), BigDecimal.valueOf(100),
-            BigDecimal.ZERO, BigDecimal.ZERO);
-        PoolCalculator pool2 = new PoolCalculator("dex2", BigDecimal.valueOf(15000), BigDecimal.valueOf(200),
-            BigDecimal.ZERO, BigDecimal.ZERO);
-
-        // call pathfinder
-        PathFinder pathFinder = new PathFinder(10);
-        BigInteger amountIn = BigInteger.valueOf(10000L);
-
-        Map<PoolDesc, AmountInAndOut> res = pathFinder.findByFixedIn(assetA, assetB, Lists.newArrayList(pool1, pool2),
-            amountIn);
-        res.entrySet().stream().forEach(e -> System.out.println(e.getKey().getDex() + " -> " + e.getValue()));
-    }
 }
