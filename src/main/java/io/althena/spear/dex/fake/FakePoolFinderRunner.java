@@ -22,6 +22,7 @@ import io.althena.spear.pool.PoolFinderRunner;
  */
 public class FakePoolFinderRunner extends PoolFinderRunner {
 
+    // TODO CHANGEME testnet
     private final String PACT_API_BASE_URL = "https://api.testnet.pact.fi";
 
     @Override

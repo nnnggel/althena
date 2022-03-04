@@ -13,8 +13,10 @@ import java.util.concurrent.CountDownLatch;
  */
 public abstract class PoolFinderRunner {
 
+    // TODO retune a list<BasePool> instead of a BasePool
     public abstract BasePool execute(Asset assetA, Asset assetB);
 
+    // TODO retune a list<BasePool> instead of a BasePool
     public BasePool executeParallel(Asset assetA, Asset assetB, CountDownLatch latch) {
         try {
             return execute(assetA, assetB);

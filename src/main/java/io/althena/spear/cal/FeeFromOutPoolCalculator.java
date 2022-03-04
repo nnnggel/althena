@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * description
+ * FeeFromOutPoolCalculator
  *
  * @author chongyu.yuan
  * @since 2022/2/24
@@ -21,7 +21,7 @@ public class FeeFromOutPoolCalculator extends PoolCalculator {
     }
 
     @Override
-    public BigDecimal _fixedInWithAssetA(Asset assetIn, BigDecimal amountIn) {
+    protected BigDecimal _fixedInWithAssetA(Asset assetIn, BigDecimal amountIn) {
         // k = reserveA * reserveB
         // amountOut[assetA]
         // = reserveB - k / (reserveA + amountIn)
@@ -66,8 +66,4 @@ public class FeeFromOutPoolCalculator extends PoolCalculator {
         return amountOut;
     }
 
-    //    @Override
-    //    public PoolCalculator newInstance(BasePool pool, BigDecimal feeBp, int scale) {
-    //        return new FeeFromOutPoolCalculator().init(pool, feeBp, scale);
-    //    }
 }

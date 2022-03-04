@@ -25,6 +25,10 @@ public abstract class BasePool {
     protected BigInteger assetBReserves;
     protected Long round;
 
+    // override feeBp in DexConfiguration if not null
+    // n/10000
+    protected Integer feeBp;
+
     public BasePool(Dex dex, Long appID, String address, Asset assetA, Asset assetB) {
         this.dex = dex;
         this.appID = appID;
@@ -51,6 +55,13 @@ public abstract class BasePool {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(dex).append(appID).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "BasePool{" + "dex=" + dex + ", appID=" + appID + ", address='" + address + '\'' + ", assetA=" + assetA
+            + ", assetB=" + assetB + ", assetAReserves=" + assetAReserves + ", assetBReserves=" + assetBReserves
+            + ", round=" + round + ", feeBp=" + feeBp + '}';
     }
 
     public abstract BasePool refresh(AlgodClient client) throws Exception;
@@ -117,5 +128,13 @@ public abstract class BasePool {
 
     public void setRound(Long round) {
         this.round = round;
+    }
+
+    public Integer getFeeBp() {
+        return feeBp;
+    }
+
+    public void setFeeBp(Integer feeBp) {
+        this.feeBp = feeBp;
     }
 }

@@ -31,10 +31,4 @@ public class PactPool extends BasePool {
         return this;
     }
 
-    @Override
-    public String toString() {
-        return "PactPool{" + "dex=" + dex + ", appID=" + appID + ", address='" + address + '\'' + ", assetA=" + assetA
-            + ", assetB=" + assetB + ", assetAReserves=" + assetAReserves + ", assetBReserves=" + assetBReserves
-            + ", round=" + round + '}';
-    }
 }

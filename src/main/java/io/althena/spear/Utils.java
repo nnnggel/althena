@@ -183,6 +183,16 @@ public class Utils {
 
     // type=1 -> bytes -> byte[]
     // type=2 -> uint  -> BigInteger
+    public static Map<String, Object> getApplicationLocalState(AlgodClient client, Address address, Long appID)
+        throws Exception {
+        List<TealKeyValue> kv = getAccountInfo(client, address).appsLocalState.stream()
+            .filter(state -> state.id.equals(appID) && state.keyValue != null).flatMap(state -> state.keyValue.stream())
+            .collect(Collectors.toList());
+        return getKV(kv);
+    }
+
+    // type=1 -> bytes -> byte[]
+    // type=2 -> uint  -> BigInteger
     public static Map<String, Object> getKV(List<TealKeyValue> tkv) {
         return tkv.stream().collect(Collectors.toMap(kv -> new String(Base64.getDecoder().decode(kv.key)), kv -> {
             TealValue tv = kv.value;
@@ -238,4 +248,37 @@ public class Utils {
         return program;
     }
 
+    public static List<Integer> encodeVarint(Integer number) {
+        // def encode_varint(integer):
+        //    """Returns bytecode representation of a TEAL Int from an integer
+        //
+        //    :param integer: integer to encode
+        //    :type integer: int
+        //    :return: list of ints representing bytecode representation of TEAL Int
+        //    :rtype: list
+        //    """
+        //    buf = b""
+        //    while True:
+        //        towrite = integer & 0x7f
+        //        integer >>= 7
+        //        if integer:
+        //            buf += bytes([towrite | 0x80])
+        //        else:
+        //            buf += bytes([towrite])
+        //            break
+        //    return buf
+
+        List<Integer> b = Lists.newArrayList();
+        while (true) {
+            Integer towrite = number & 0x7f;
+            number >>= 7;
+            if (number != 0) {
+                b.add(towrite | 0x80);
+            } else {
+                b.add(towrite);
+                break;
+            }
+        }
+        return b;
+    }
 }

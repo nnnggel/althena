@@ -31,10 +31,4 @@ public class FakePool extends BasePool {
         return this;
     }
 
-    @Override
-    public String toString() {
-        return "FakePool{" + "dex=" + dex + ", appID=" + appID + ", address='" + address + '\'' + ", assetA=" + assetA
-            + ", assetB=" + assetB + ", assetAReserves=" + assetAReserves + ", assetBReserves=" + assetBReserves
-            + ", round=" + round + '}';
-    }
 }

@@ -22,8 +22,10 @@ import io.althena.spear.pool.PoolFinderRunner;
  */
 public class PactPoolFinderRunner extends PoolFinderRunner {
 
+    // TODO CHANGEME testnet
     private final String PACT_API_BASE_URL = "https://api.testnet.pact.fi";
 
+    // TODO change to use cache: https://api.testnet.pact.fi/api/pools?limit=1000
     @Override
     public BasePool execute(Asset assetA, Asset assetB) {
         // Primary asset always has lower index.

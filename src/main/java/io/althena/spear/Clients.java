@@ -7,7 +7,7 @@ import com.algorand.algosdk.v2.client.common.AlgodClient;
 import com.squareup.okhttp.OkHttpClient;
 
 /**
- * description
+ * clients
  *
  * @author chongyu.yuan
  * @since 2022/2/24
@@ -17,7 +17,7 @@ public class Clients {
     // http client
     private static final OkHttpClient client = new OkHttpClient();
 
-    // FIXME testnet
+    // TODO CHANGEME testnet
     // algod client
     private static final String ALGOD_API_ADDR = "https://testnet-algorand.api.purestake.io/ps2";
     private static final Integer ALGOD_PORT = 443;

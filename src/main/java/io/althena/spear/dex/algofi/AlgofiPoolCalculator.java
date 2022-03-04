@@ -1,22 +1,23 @@
 /*
  * Copyright (C) 2022 chongyu.yuan
  */
-package io.althena.spear.cal;
+package io.althena.spear.dex.algofi;
 
+import io.althena.spear.cal.PoolCalculator;
 import io.althena.spear.model.Asset;
 import io.althena.spear.model.BasePool;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * FeeFromInPoolCalculator
+ * AlgofiPoolCalculator
  *
  * @author chongyu.yuan
  * @since 2022/2/24
  */
-public class FeeFromInPoolCalculator extends PoolCalculator {
+public class AlgofiPoolCalculator extends PoolCalculator {
 
-    protected FeeFromInPoolCalculator(BasePool pool, BigDecimal feeBp, Integer scale) {
+    public AlgofiPoolCalculator(BasePool pool, BigDecimal feeBp, Integer scale) {
         super(pool, feeBp, scale);
     }
 

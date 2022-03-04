@@ -9,13 +9,11 @@ import io.althena.spear.cal.PathFinder;
 import io.althena.spear.cal.PoolCalculator;
 import io.althena.spear.dex.DexConfiguration;
 import io.althena.spear.dex.DexRepo;
-import io.althena.spear.dex.fake.FakePoolFinderRunner;
 import io.althena.spear.dex.pact.PactPoolFinderRunner;
 import io.althena.spear.model.Asset;
 import io.althena.spear.model.BasePool;
 import io.althena.spear.model.Dex;
 import io.althena.spear.pool.PoolFinder;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -30,15 +28,21 @@ import java.util.stream.Collectors;
 public class MainTest {
 
     public static void main(String[] args) throws Exception {
+        test();
+    }
+
+    private static void test() throws Exception {
         // register dexes
-                DexRepo.register(Dex.FAKE,
-                    new DexConfiguration(30, new FakePoolFinderRunner(), FeeFromOutPoolCalculator.class));
+        //        DexRepo.register(Dex.FAKE,
+        //            new DexConfiguration(30, new FakePoolFinderRunner(), FeeFromOutPoolCalculator.class));
         DexRepo.register(Dex.PACT,
             new DexConfiguration(30, new PactPoolFinderRunner(), FeeFromOutPoolCalculator.class));
+        //        DexRepo.register(Dex.ALGOFI,
+        //            new DexConfiguration(-1, new AlgofiPoolFinderRunner(), AlgofiPoolCalculator.class));
 
         // mock assets
         Asset ALGO = new Asset(0L).fetch(Clients.getAlgodClient());
-        Asset USDC = new Asset(67395862L).fetch(Clients.getAlgodClient());
+        Asset USDC = new Asset(21582668L).fetch(Clients.getAlgodClient());
 
         // find available pools
         List<BasePool> pools = PoolFinder.find(ALGO, USDC);
@@ -47,18 +51,14 @@ public class MainTest {
         }
 
         // init pathfinder
-        BigInteger amountIn = BigInteger.valueOf(1_000_000L);
-        // TODO determine copis(power of 10), based_ecimal(10=1,100=2,1000=3...) by estimating amountIn value
+        BigInteger amountIn = BigInteger.valueOf(100_000_000L);
+        // TODO determine copis(power of 10), base_decimal(10=1,100=2,1000=3...) by estimating amountIn value
         PathFinder pathFinder = new PathFinder(100);
         int decimal = 2 + USDC.getDecimals().intValue();
 
         // build calculated pool
-        List<PoolCalculator> poolCalculators = pools.stream().map(pool -> {
-            Dex dex = pool.getDex();
-            DexConfiguration dexConfiguration = DexRepo.getConfig(dex);
-            return PoolCalculator.newInstance(dexConfiguration.getPoolCalculatorClazz(), pool,
-                BigDecimal.valueOf(dexConfiguration.getFeeBp()), decimal);
-        }).collect(Collectors.toList());
+        List<PoolCalculator> poolCalculators = pools.stream().map(pool -> PoolCalculator.newInstance(pool, decimal))
+            .collect(Collectors.toList());
         System.out.println(poolCalculators);
 
         // calculate and group
@@ -66,6 +66,6 @@ public class MainTest {
         res.entrySet().stream().forEach(
             e -> System.out.println(e.getKey().getDex() + ":" + e.getKey().getAppID() + " -> " + e.getValue()));
 
-        // prepare txns
+        // build quote
     }
 }
