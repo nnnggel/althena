@@ -47,7 +47,7 @@ public class PoolFinder {
             List<Future<BasePool>> futures = Lists.newLinkedList();
             for (Dex dex : dexes) {
                 final PoolFinderRunner poolFinderRunner = DexRepo.getConfig(dex).getPoolFinderRunner();
-                futures.add(es.submit(() -> poolFinderRunner.executeParallel(assetA, assetB, latch)));
+                futures.add(es.submit(() -> poolFinderRunner.executeParallel(assetA.clone(), assetB.clone(), latch)));
             }
 
             latch.await(LATCH_TIMEOUT, TimeUnit.SECONDS);

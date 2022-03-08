@@ -3,8 +3,6 @@
  */
 package io.althena.spear.cal;
 
-import io.althena.spear.dex.DexConfiguration;
-import io.althena.spear.dex.DexRepo;
 import io.althena.spear.model.Asset;
 import io.althena.spear.model.BasePool;
 import io.althena.spear.model.Dex;
@@ -51,27 +49,6 @@ public abstract class PoolCalculator {
     protected abstract BigDecimal _fixedInWithAssetA(Asset assetIn, BigDecimal amountIn);
 
     protected abstract BigDecimal _fixedInWithAssetB(Asset assetIn, BigDecimal amountIn);
-
-    public static PoolCalculator newInstance(BasePool pool, int scale) {
-        // dex
-        Dex dex = pool.getDex();
-        // dex configuration
-        DexConfiguration dexConfiguration = DexRepo.getConfig(dex);
-        if (dexConfiguration != null) {
-            // class
-            Class<? extends PoolCalculator> clazz = dexConfiguration.getPoolCalculatorClazz();
-            // feeBp
-            Integer feeBpInPool = pool.getFeeBp();
-            BigDecimal feeBp = BigDecimal.valueOf(feeBpInPool == null ? dexConfiguration.getFeeBp() : feeBpInPool);
-            try {
-                return clazz.getDeclaredConstructor(BasePool.class, BigDecimal.class, Integer.class)
-                    .newInstance(pool, feeBp, scale);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
 
     @Override
     public String toString() {

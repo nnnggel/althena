@@ -3,6 +3,7 @@
  */
 package io.althena.spear.model;
 
+import com.algorand.algosdk.crypto.LogicsigSignature;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
 import java.math.BigInteger;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -23,6 +24,7 @@ public abstract class BasePool {
     protected Asset assetB;
     protected BigInteger assetAReserves;
     protected BigInteger assetBReserves;
+    protected LogicsigSignature logicsigSignature;
     protected Long round;
 
     // override feeBp in DexConfiguration if not null
@@ -120,6 +122,14 @@ public abstract class BasePool {
 
     public void setAssetBReserves(BigInteger assetBReserves) {
         this.assetBReserves = assetBReserves;
+    }
+
+    public LogicsigSignature getLogicsigSignature() {
+        return logicsigSignature;
+    }
+
+    public void setLogicsigSignature(LogicsigSignature logicsigSignature) {
+        this.logicsigSignature = logicsigSignature;
     }
 
     public Long getRound() {

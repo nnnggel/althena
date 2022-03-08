@@ -126,9 +126,9 @@ public class ThresholdContractTest {
 
     public static void main(String[] args) throws Exception {
         ThresholdContractTest thresholdContractTest = new ThresholdContractTest();
-        //        thresholdContractTest.createThresholdApp(); // 70237900L
+        //        thresholdContractTest.createThresholdApp(); // 76590607L
         Account testAcount = new Account("<-- MNEMONIC_FOR_TEST_ACOUNT -->");
-        thresholdContractTest.beginAndFinish(70237900L, testAcount, 21582668L, 10L);
+        thresholdContractTest.beginAndFinish(76590607L, testAcount, 21582668L, 10L);
     }
 
 }

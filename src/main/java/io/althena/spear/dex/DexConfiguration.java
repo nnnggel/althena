@@ -5,6 +5,7 @@ package io.althena.spear.dex;
 
 import io.althena.spear.cal.PoolCalculator;
 import io.althena.spear.pool.PoolFinderRunner;
+import io.althena.spear.txn.DexTransactionsBuilder;
 
 /**
  * DexConfiguration
@@ -21,11 +22,14 @@ public class DexConfiguration {
 
     private Class<? extends PoolCalculator> poolCalculatorClazz;
 
+    private DexTransactionsBuilder dexTransactionsBuilder;
+
     public DexConfiguration(int feeBp, PoolFinderRunner poolFinderRunner,
-        Class<? extends PoolCalculator> poolCalculatorClazz) {
+        Class<? extends PoolCalculator> poolCalculatorClazz, DexTransactionsBuilder dexTransactionsBuilder) {
         this.feeBp = feeBp;
         this.poolFinderRunner = poolFinderRunner;
         this.poolCalculatorClazz = poolCalculatorClazz;
+        this.dexTransactionsBuilder = dexTransactionsBuilder;
     }
 
     public int getFeeBp() {
@@ -50,5 +54,13 @@ public class DexConfiguration {
 
     public void setPoolCalculatorClazz(Class<? extends PoolCalculator> poolCalculatorClazz) {
         this.poolCalculatorClazz = poolCalculatorClazz;
+    }
+
+    public DexTransactionsBuilder getDexTransactionsBuilder() {
+        return dexTransactionsBuilder;
+    }
+
+    public void setDexTransactionsBuilder(DexTransactionsBuilder dexTransactionsBuilder) {
+        this.dexTransactionsBuilder = dexTransactionsBuilder;
     }
 }

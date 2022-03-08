@@ -2,7 +2,7 @@
 txn ApplicationID
 int 0
 ==
-bnz main_l13
+bnz main_l16
 txn OnCompletion
 int NoOp
 ==
@@ -27,13 +27,18 @@ main_l5:
 txna ApplicationArgs 0
 byte "begin"
 ==
-bnz main_l9
+bnz main_l12
 txna ApplicationArgs 0
 byte "finish"
 ==
 bnz main_l8
 err
 main_l8:
+byte "swap_asset_id"
+app_global_get
+int 0
+==
+bnz main_l11
 byte "user_addr"
 app_global_get
 byte "swap_asset_id"
@@ -48,9 +53,19 @@ app_global_get
 >=
 &&
 assert
+main_l10:
 int 1
 return
-main_l9:
+main_l11:
+byte "user_addr"
+app_global_get
+balance
+byte "min_balance"
+app_global_get
+>=
+assert
+b main_l10
+main_l12:
 byte "user_addr"
 txn Sender
 app_global_put
@@ -62,7 +77,7 @@ txna ApplicationArgs 1
 btoi
 int 0
 ==
-bnz main_l12
+bnz main_l15
 txn Sender
 txna ApplicationArgs 1
 btoi
@@ -77,10 +92,10 @@ btoi
 load 1
 +
 app_global_put
-main_l11:
+main_l14:
 int 1
 return
-main_l12:
+main_l15:
 byte "min_balance"
 txna ApplicationArgs 2
 btoi
@@ -88,8 +103,8 @@ txn Sender
 balance
 +
 app_global_put
-b main_l11
-main_l13:
+b main_l14
+main_l16:
 byte "user_addr"
 txn Sender
 app_global_put

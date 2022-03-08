@@ -16,7 +16,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author chongyu.yuan
  * @since 2022/2/9
  */
-public class Asset {
+public class Asset implements Cloneable {
 
     private Long id;
     private String name;
@@ -109,5 +109,15 @@ public class Asset {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(id).toHashCode();
+    }
+
+    @Override
+    public Asset clone() {
+        try {
+            Asset clone = (Asset) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

@@ -43,28 +43,32 @@ public class AlgofiPoolFinderRunner extends PoolFinderRunner {
             assetB = tmp;
         }
 
-        final Asset _assetA = assetA;
+        final Asset _assetA = assetA.clone();
+        // algofi use 1 instead of 0 for ALGO
+        if (_assetA.getId().longValue() == 0) {
+            _assetA.setId(1L);
+        }
         final Asset _assetB = assetB;
         Optional<AlgofiPool> poolOpt = Stream.of(AlgofiPoolType.values()).parallel().map(poolType -> {
-                byte[] a = generateLogicSig(1L, 21582668L, poolType.getValidatorIndex());
+                byte[] a = generateLogicSig(_assetA.getId(), _assetB.getId(), poolType.getValidatorIndex());
                 LogicSigAccount logicSigAccount = new LogicSigAccount(a, null);
                 try {
                     Map<String, Object> logicSigLocalState = Utils.getApplicationLocalState(Clients.getAlgodClient(),
                         logicSigAccount.getAddress(), managerAppId);
 
                     // PoolStatus.UNINITIALIZED
-                    if (logicSigLocalState == null) {
+                    if (logicSigLocalState == null || logicSigLocalState.size() == 0) {
                         return null;
                     }
 
                     Long appID = ((BigInteger) logicSigLocalState.get("p")).longValue();
                     return new AlgofiPool(Dex.ALGOFI, appID, Address.forApplication(appID).encodeAsString(), _assetA,
-                        _assetB, poolType);
+                        _assetB, poolType, managerAppId);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 return null;
-            }) // FIXME find the one with lower bp
+            }).filter(pool -> pool != null) // FIXME find the one which feeBp is lower
             .sorted(Comparator.comparing(AlgofiPool::getFeeBp)).findFirst();
 
         AlgofiPool res = null;
@@ -107,5 +111,4 @@ public class AlgofiPoolFinderRunner extends PoolFinderRunner {
         concatArray.addAll(POOL_FACTORY_LOGIC_SIG_TEMPLATE_4);
         return ArrayUtils.toPrimitive(concatArray.stream().map(entero -> entero.byteValue()).toArray(Byte[]::new));
     }
-
 }

@@ -22,6 +22,23 @@ public class AlgofiPoolCalculator extends PoolCalculator {
     }
 
     @Override
+    public BigDecimal fixedIn(Asset assetIn, BigDecimal amountIn) {
+        final Asset _assetIn = assetIn.clone();
+        // algofi use 1 instead of 0 for ALGO
+        if (_assetIn.getId().longValue() == 0) {
+            _assetIn.setId(1L);
+        }
+
+        if (_assetIn.equals(assetA)) {
+            return _fixedInWithAssetA(_assetIn, amountIn);
+        } else if (_assetIn.equals(assetB)) {
+            return _fixedInWithAssetB(_assetIn, amountIn);
+        } else {
+            throw new RuntimeException("assetIn must be assetA or assetB");
+        }
+    }
+
+    @Override
     protected BigDecimal _fixedInWithAssetA(Asset assetIn, BigDecimal amountIn) {
         BigDecimal swapFee = amountIn.multiply(feeBp).divide(BigDecimal.valueOf(10000L), scale, RoundingMode.FLOOR);
         BigDecimal amountInDeductFee = amountIn.subtract(swapFee);

@@ -20,9 +20,13 @@ import java.util.Map;
  */
 public class AlgofiPool extends BasePool {
 
-    public AlgofiPool(Dex dex, Long appID, String address, Asset assetA, Asset assetB, AlgofiPoolType poolType) {
+    private Long manageAppID;
+
+    public AlgofiPool(Dex dex, Long appID, String address, Asset assetA, Asset assetB, AlgofiPoolType poolType,
+        Long manageAppID) {
         super(dex, appID, address, assetA, assetB);
         this.feeBp = poolType.getSwapFeeBp();
+        this.manageAppID = manageAppID;
     }
 
     @Override
@@ -34,4 +38,11 @@ public class AlgofiPool extends BasePool {
         return this;
     }
 
+    public Long getManageAppID() {
+        return manageAppID;
+    }
+
+    public void setManageAppID(Long manageAppID) {
+        this.manageAppID = manageAppID;
+    }
 }

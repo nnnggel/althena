@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
@@ -248,6 +249,12 @@ public class Utils {
         return program;
     }
 
+    // to_bytes(8, "big")
+    public static byte[] intToBytes(Long num) {
+        // Arrays.concatenate(ByteBuffer.allocate(8 - minAmoutOutByte.length).array(),minAmountOut.toByteArray())
+        return ByteBuffer.allocate(8).putLong(num).array();
+    }
+
     public static List<Integer> encodeVarint(Integer number) {
         // def encode_varint(integer):
         //    """Returns bytecode representation of a TEAL Int from an integer
@@ -281,4 +288,5 @@ public class Utils {
         }
         return b;
     }
+
 }
