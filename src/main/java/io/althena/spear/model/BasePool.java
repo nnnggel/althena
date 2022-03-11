@@ -1,10 +1,13 @@
 /*
- * Copyright (C) 2020 ycy
+ * Copyright (C) 2022 chongyu.yuan
  */
 package io.althena.spear.model;
 
+import com.algorand.algosdk.crypto.LogicsigSignature;
 import com.algorand.algosdk.v2.client.common.AlgodClient;
 import java.math.BigInteger;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * BasePool
@@ -14,18 +17,72 @@ import java.math.BigInteger;
  */
 public abstract class BasePool {
 
+    protected Dex dex;
+    protected Long appID;
     protected String address;
-    protected Long asset1Id;
-    protected Long asset2Id;
-    protected BigInteger asset1Reserves;
-    protected BigInteger asset2Reserves;
+    protected Asset assetA;
+    protected Asset assetB;
+    protected BigInteger assetAReserves;
+    protected BigInteger assetBReserves;
+    protected LogicsigSignature logicsigSignature;
     protected Long round;
 
-    public BasePool(String address) {
+    // override feeBp in DexConfiguration if not null
+    // n/10000
+    protected Integer feeBp;
+
+    public BasePool(Dex dex, Long appID, String address, Asset assetA, Asset assetB) {
+        this.dex = dex;
+        this.appID = appID;
         this.address = address;
+        this.assetA = assetA;
+        this.assetB = assetB;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        BasePool basePool = (BasePool) o;
+
+        return new EqualsBuilder().append(dex, basePool.dex).append(appID, basePool.appID).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(dex).append(appID).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "BasePool{" + "dex=" + dex + ", appID=" + appID + ", address='" + address + '\'' + ", assetA=" + assetA
+            + ", assetB=" + assetB + ", assetAReserves=" + assetAReserves + ", assetBReserves=" + assetBReserves
+            + ", round=" + round + ", feeBp=" + feeBp + '}';
     }
 
     public abstract BasePool refresh(AlgodClient client) throws Exception;
+
+    public Dex getDex() {
+        return dex;
+    }
+
+    public void setDex(Dex dex) {
+        this.dex = dex;
+    }
+
+    public Long getAppID() {
+        return appID;
+    }
+
+    public void setAppID(Long appID) {
+        this.appID = appID;
+    }
 
     public String getAddress() {
         return address;
@@ -35,36 +92,44 @@ public abstract class BasePool {
         this.address = address;
     }
 
-    public Long getAsset1Id() {
-        return asset1Id;
+    public Asset getAssetA() {
+        return assetA;
     }
 
-    public void setAsset1Id(Long asset1Id) {
-        this.asset1Id = asset1Id;
+    public void setAssetA(Asset assetA) {
+        this.assetA = assetA;
     }
 
-    public Long getAsset2Id() {
-        return asset2Id;
+    public Asset getAssetB() {
+        return assetB;
     }
 
-    public void setAsset2Id(Long asset2Id) {
-        this.asset2Id = asset2Id;
+    public void setAssetB(Asset assetB) {
+        this.assetB = assetB;
     }
 
-    public BigInteger getAsset1Reserves() {
-        return asset1Reserves;
+    public BigInteger getAssetAReserves() {
+        return assetAReserves;
     }
 
-    public void setAsset1Reserves(BigInteger asset1Reserves) {
-        this.asset1Reserves = asset1Reserves;
+    public void setAssetAReserves(BigInteger assetAReserves) {
+        this.assetAReserves = assetAReserves;
     }
 
-    public BigInteger getAsset2Reserves() {
-        return asset2Reserves;
+    public BigInteger getAssetBReserves() {
+        return assetBReserves;
     }
 
-    public void setAsset2Reserves(BigInteger asset2Reserves) {
-        this.asset2Reserves = asset2Reserves;
+    public void setAssetBReserves(BigInteger assetBReserves) {
+        this.assetBReserves = assetBReserves;
+    }
+
+    public LogicsigSignature getLogicsigSignature() {
+        return logicsigSignature;
+    }
+
+    public void setLogicsigSignature(LogicsigSignature logicsigSignature) {
+        this.logicsigSignature = logicsigSignature;
     }
 
     public Long getRound() {
@@ -73,5 +138,13 @@ public abstract class BasePool {
 
     public void setRound(Long round) {
         this.round = round;
+    }
+
+    public Integer getFeeBp() {
+        return feeBp;
+    }
+
+    public void setFeeBp(Integer feeBp) {
+        this.feeBp = feeBp;
     }
 }

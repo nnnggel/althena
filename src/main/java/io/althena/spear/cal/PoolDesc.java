@@ -1,9 +1,10 @@
 /*
- * Copyright (C) 2020 ycy
+ * Copyright (C) 2022 chongyu.yuan
  */
 package io.althena.spear.cal;
 
 import io.althena.spear.model.Asset;
+import io.althena.spear.model.Dex;
 
 /**
  * PoolDesc
@@ -13,11 +14,11 @@ import io.althena.spear.model.Asset;
  */
 public class PoolDesc {
 
-    private String dex;
+    private Dex dex;
     private Asset assetA;
     private Asset assetB;
 
-    public PoolDesc(String dex, Asset assetA, Asset assetB) {
+    public PoolDesc(Dex dex, Asset assetA, Asset assetB) {
         this.dex = dex;
         this.assetA = assetA;
         this.assetB = assetB;
@@ -45,11 +46,11 @@ public class PoolDesc {
         this.assetB = assetB;
     }
 
-    public String getDex() {
+    public Dex getDex() {
         return dex;
     }
 
-    public void setDex(String dex) {
+    public void setDex(Dex dex) {
         this.dex = dex;
     }
 }
