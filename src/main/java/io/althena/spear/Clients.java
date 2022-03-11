@@ -22,7 +22,7 @@ public class Clients {
     private static final String ALGOD_API_ADDR = "https://testnet-algorand.api.purestake.io/ps2";
     private static final Integer ALGOD_PORT = 443;
     private static final String ALGOD_API_TOKEN_KEY = "X-API-Key";
-    private static final String ALGOD_API_TOKEN = "xLlEgw2Iul3SWKivKzubM9j4Wlx4nvhb7fcRa0eh";
+    private static final String ALGOD_API_TOKEN = "<-- ALGOD_API_TOKEN -->";
 
     private static final AlgodClient algodClient = new AlgodClient(ALGOD_API_ADDR, ALGOD_PORT, ALGOD_API_TOKEN,
         ALGOD_API_TOKEN_KEY);

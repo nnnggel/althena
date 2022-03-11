@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class DexTransactionsAssembler {
 
     // TODO CHANGEME testnet
-    private static Long thresholdAppID = 76590607L;
+    private static Long thresholdAppID = 0L;
 
     public static List<Transaction> assemble(Map<BasePool, AmountInAndOut> calculatedMap, Asset assetOut,
         String userAddress, BigDecimal slippage) throws Exception {
@@ -41,13 +41,22 @@ public class DexTransactionsAssembler {
         BigDecimal amountOutTotal = calculatedMap.values().stream().map(aio -> aio.getAmountOut())
             .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigInteger minAmountOutTotal = amountOutTotal.multiply(BigDecimal.ONE.subtract(slippage)).toBigInteger();
-
-        List<Transaction> thresholdTnx = _threshold(assetOut, userAddress, minAmountOutTotal, sp);
+        // minAmountOutTotal should deduct fee if assetOut is ALGO.
+        if (assetOut.getId().longValue() == 0) {
+            BigInteger totalFee = txnMap.values().stream().flatMap(txns -> txns.stream()).map(txn -> txn.fee)
+                .reduce(BigInteger.ZERO, BigInteger::add);
+            minAmountOutTotal = minAmountOutTotal.subtract(totalFee).subtract(BigInteger.valueOf(1000L));
+        }
 
         final List<Transaction> res = Lists.newArrayList();
-        res.add(thresholdTnx.get(0));
-        txnMap.values().forEach(txns -> res.addAll(txns));
-        res.add(thresholdTnx.get(1));
+        if (minAmountOutTotal.compareTo(BigInteger.ZERO) <= 0) {
+            txnMap.values().forEach(txns -> res.addAll(txns));
+        } else {
+            List<Transaction> thresholdTnx = _threshold(assetOut, userAddress, minAmountOutTotal, sp);
+            res.add(thresholdTnx.get(0));
+            txnMap.values().forEach(txns -> res.addAll(txns));
+            res.add(thresholdTnx.get(1));
+        }
 
         return res;
     }
